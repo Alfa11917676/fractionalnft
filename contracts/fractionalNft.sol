@@ -22,6 +22,7 @@ contract fractionalNft is Ownable, Pausable, ERC1155Upgradeable, SignerImplement
     uint public currentTokenId = 1;
     address public designatedSigner;
     uint public _maxSupply;
+    uint public currentSupply;
     uint32 callbackGasLimit = 100000;
     uint16 requestConfirmations = 3;
     mapping (address => bool) public validUsers;
@@ -51,12 +52,20 @@ contract fractionalNft is Ownable, Pausable, ERC1155Upgradeable, SignerImplement
         require (block.timestamp <= signer.nonce + 10 minutes, 'Signature Expired');
         require (!nonceStatus[msg.sender][signer.nonce],'Nonce used');
         nonceStatus[msg.sender][signer.nonce] = true;
+        currentSupply += signer.totalTokensToMint;
         for (uint i =0;i<signer.totalTokensToMint;i++) {
             currentTokenId++;
             _mint(msg.sender,currentTokenId,1,'');
         }
     }
 
+    function burnToken(address _user, uint[] memory tokenIds) external {
+        require (validUsers[msg.sender],'!Valid User');
+        currentSupply -= tokenIds.length;
+        for (uint i=0; i < tokenIds.length; i++) {
+            _burn(_user,tokenIds[i],1);
+        }
+    }
     function addSigner(address _signer) external onlyOwner {
         designatedSigner = _signer;
     }
