@@ -29,13 +29,17 @@ contract fractionalNft is Ownable, Pausable, ERC1155Upgradeable, SignerImplement
     uint256[] public s_randomWords;
     uint256 public s_requestId;
     address s_owner;
+    bool public onlyOnce;
 
 
-    function init (string memory _uri, string memory _signer, string memory _version, uint64 subscriptionId, address _vrfAddress, address _vrfCoordinator, address _marketPlaceAddress, uint _supply) external initializer {
+    function init (string memory _uri, string memory _signer, string memory _version, uint64 subscriptionId, address _vrfAddress, address _vrfCoordinator, address _marketPlaceAddress, uint _supply) external  {
+                require (!onlyOnce,'Already Initialised');
+                onlyOnce = true;
                Ownableinitialize();
                Pausableinitialize();
                __VRFConsumerBaseV2_init(_vrfAddress);
                COORDINATOR = VRFCoordinatorV2Interface(_vrfCoordinator);
+                keyHash = 0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc;
                 validUsers[_marketPlaceAddress] = true;
                _maxSupply = _supply;
                s_owner = msg.sender;
@@ -76,7 +80,7 @@ contract fractionalNft is Ownable, Pausable, ERC1155Upgradeable, SignerImplement
 
     function startRaffle() external onlyOwner {
         require (validUsers[msg.sender],'!Valid User');
-        require (currentTokenId > _maxSupply/2,'50% not reached');
+        require (currentTokenId - 1 > _maxSupply/2,'50% not reached');
         s_requestId = COORDINATOR.requestRandomWords(
             keyHash,
             s_subscriptionId,

@@ -14,20 +14,21 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const Proxy = await hre.ethers.getContractFactory("UnstructuredProxy");
-  const proxy = await Proxy.deploy();
-
-  await proxy.deployed();
-
-  console.log("Proxy deployed to:", proxy.address);
+  // const Proxy = await hre.ethers.getContractFactory("UnstructuredProxy");
+  // const proxy = await Proxy.deploy();
+  //
+  // await proxy.deployed();
+  //
+  // console.log("Proxy deployed to:", proxy.address);
 
   const Implementation = await hre.ethers.getContractFactory('fractionalNft')
   const implementation = await Implementation.deploy()
-  await implementation.deployed()
+
+  // await implementation.deployTransaction(6)
 
   console.log ('The implementation is deployed at', implementation.address)
 
-  await proxy.upgradeTo(implementation.address);
+  // await proxy.upgradeTo(implementation.address);
 
   console.log("All connection made")
 

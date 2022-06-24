@@ -34,11 +34,11 @@ contract ERC1155Upgradeable is Initializable, Context, ERC165Upgradeable, IERC11
     /**
      * @dev See {_setURI}.
      */
-    function __ERC1155_init(string memory uri_) internal onlyInitializing {
+    function __ERC1155_init(string memory uri_) internal  {
         __ERC1155_init_unchained(uri_);
     }
 
-    function __ERC1155_init_unchained(string memory uri_) internal onlyInitializing {
+    function __ERC1155_init_unchained(string memory uri_) internal {
         _setURI(uri_);
     }
 
