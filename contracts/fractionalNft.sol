@@ -13,9 +13,9 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 
 contract fractionalNft is Ownable, Pausable, ERC1155Upgradeable, SignerImplementation, ReentrancyGuardUpgradeable, VRFConsumerBaseV2 {
     VRFCoordinatorV2Interface COORDINATOR;
-    uint64 s_subscriptionId;
-    address vrfCoordinator = 0x6168499c0cFfCaCD319c818142124B7A15E857ab;
-    bytes32 keyHash = 0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc;
+    uint64 public s_subscriptionId;
+    address public vrfCoordinator = 0x6168499c0cFfCaCD319c818142124B7A15E857ab;
+    bytes32 public keyHash = 0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc;
     mapping (address => mapping (uint => bool)) public nonceStatus;
     mapping (uint => address) public ownerOfToken;
     bool public isRaffleDone;
@@ -97,6 +97,11 @@ contract fractionalNft is Ownable, Pausable, ERC1155Upgradeable, SignerImplement
         winnerTokenId +=2;
         _mint(ownerOfToken[winnerTokenId],1,1,'');
     }
+
+    function changeSubscriptionId(uint64 _id) external onlyOwner {
+        s_subscriptionId = _id;
+    }
+
 
     function _beforeTokenTransfer(
         address operator,

@@ -1,9 +1,10 @@
-require("dotenv").config();
-
-require("@nomiclabs/hardhat-etherscan");
 require("@nomiclabs/hardhat-waffle");
-require("hardhat-gas-reporter");
+require("@nomiclabs/hardhat-web3");
+require("@nomiclabs/hardhat-etherscan");
+require("@openzeppelin/hardhat-upgrades");
 require("solidity-coverage");
+require("hardhat-deploy");
+require("dotenv").config();
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -21,20 +22,38 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY || "sample-kovan-key";
+const MNEMONIC = process.env.MNEMONIC || "sample-mnemonic";
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "etherscan-api-key";
+
 module.exports = {
-  solidity: "0.8.7",
-  networks: {
-    ropsten: {
-      url: process.env.ROPSTEN_URL || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+  solidity: {
+    version: "0.8.7",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
     },
   },
-  gasReporter: {
-    enabled: process.env.REPORT_GAS !== undefined,
-    currency: "USD",
+  namedAccounts: {
+    deployer: 0,
+  },
+  networks: {
+
+    rinkeby: {
+      url: `https://speedy-nodes-nyc.moralis.io/0ec81e1f2f45bea5e5616aea/eth/rinkeby`,
+      accounts: [`${process.env.PRIVATE_KEY}`],
+    },
+    mainnet: {
+      url: `https://mainnet.infura.io/v3/${process.env.INFURA_KEY}`,
+      accounts: [`${process.env.PRIVATE_KEY}`],
+    }
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: {
+      rinkeby: ETHERSCAN_API_KEY
+    },
   },
 };

@@ -14,12 +14,23 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const Greeter = await hre.ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
+  const Proxy = await hre.ethers.getContractFactory("UnstructuredProxy");
+  const proxy = await Proxy.deploy();
 
-  await greeter.deployed();
+  await proxy.deployed();
 
-  console.log("Greeter deployed to:", greeter.address);
+  console.log("Proxy deployed to:", proxy.address);
+
+  const Implementation = await hre.ethers.getContractFactory('fractionalNft')
+  const implementation = await Implementation.deploy()
+  await implementation.deployed()
+
+  console.log ('The implementation is deployed at', implementation.address)
+
+  await proxy.upgradeTo(implementation.address);
+
+  console.log("All connection made")
+
 }
 
 // We recommend this pattern to be able to use async/await everywhere
