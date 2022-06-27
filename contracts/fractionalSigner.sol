@@ -8,9 +8,14 @@ contract SignerImplementation is EIP712Upgradeable{
     string private SIGNATURE_VERSION;
 
     struct Signer{
+        address _nftAddress;
         address _user;
+        address buyer;
         uint totalTokensToMint;
         uint nonce;
+        uint amount;
+        uint tokenId;
+        bool inEth;
         bytes signature;
     }
 
@@ -28,10 +33,15 @@ contract SignerImplementation is EIP712Upgradeable{
 
     function _hash(Signer memory signer) internal view returns (bytes32) {
         return _hashTypedDataV4(keccak256(abi.encode(
-                keccak256("Signer(address _user,uint256 totalTokensToMint,uint256 nonce)"),
+                keccak256("Signer(address _nftAddress,address _user,address buyer,uint256 totalTokensToMint,uint256 nonce,uint256 amount,uint256 tokenId,bool inEth)"),
+                    signer._nftAddress,
                     signer._user,
+                    signer.buyer,
                     signer.totalTokensToMint,
-                    signer.nonce
+                    signer.nonce,
+                    signer.amount,
+                    signer.tokenId,
+                    signer.inEth
             )));
     }
 
